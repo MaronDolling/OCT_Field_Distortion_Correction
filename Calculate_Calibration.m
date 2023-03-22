@@ -1,5 +1,5 @@
 function [coefficients, fval, exitflag, output] = Calculate_Calibration( ...
-    phantom_img, spacing, phantom_radius, n_circle_steps, circle_width, ...
+    phantom_img, spacing, phantom_radius, FOV_diameter, n_circle_steps, circle_width, ...
     options)
 %% Calculate_Calibration - calculates the FDC
 % Algorithm accepts phantom image, its spacing, radius and an optimset and
@@ -66,7 +66,7 @@ phantom_img_surface = Surface_Detection_Phantom(phantom_img, spacing);
 
 %% Start optimization process
 [optim_out, fval, exitflag, output] = fminsearch( @(c) ...
-        loss_function(phantom_img_surface, phantom_radius, c, ...
+        loss_function(phantom_img_surface, phantom_radius, c, FOV_diameter, ...
         n_circle_steps, circle_width), coefficients_initial, options);
 
 
@@ -90,13 +90,13 @@ end
 
 %% Loss function for Optimization prcedure
 function loss = loss_function(phantom_surface, phantom_radius, ...
-        coefficients, n_circle_steps, circle_width)
+        coefficients, FOV_diameter, n_circle_steps, circle_width)
     % Calculates the mean deviation of radii at certain angles around the
     % phantom from the expected.
     
     % Apply the coefficients to correct surface
     phantom_surface_corrected = Apply_Coefficients_To_Surface( ...
-            phantom_surface, coefficients);
+            phantom_surface, coefficients, FOV_diameter/2);
     
     x = phantom_surface_corrected(:,1);
     y = phantom_surface_corrected(:,2);

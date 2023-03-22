@@ -1,4 +1,4 @@
-function Y = Apply_Coefficients_To_Surface(X, c)
+function Y = Apply_Coefficients_To_Surface(X, c, norm_radius)
 %% Apply_Coefficients_To_Surface -  correct an extracted surface
 % Accepts surface data and coefficients for field distortion correction
 % (FDC) and returns corrected surface coordinates.
@@ -73,7 +73,7 @@ x = x .* (c.s01 + c.s02*z + c.s03*z.^2); % eq. (2)
 y = y .* (c.s01 + c.s02*z + c.s03*z.^2); 
 
 [th, r] = cart2pol(x,y); % eqs. (4), (5)
-r = r ./ sqrt(32);
+r = r ./ norm_radius;
 
 z = z + ...     % eq. (3)
         c.c0 + ...                 % offset

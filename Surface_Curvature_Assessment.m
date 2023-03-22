@@ -45,6 +45,10 @@ function [BFS_radius, R_steep, A_steep, R_flat, A_flat, MSE, exitflag, ...
 % March 2023
 %--------------------------------------------------------------------------
 
+% First: Remove NaN Entries from surface
+ii = isnan(sum(SURFACE, 2));
+SURFACE(ii, :) = [];
+
 %% Calculate BFS
 [~, R, ~] = ellipsoid_fit(SURFACE, 'xyz');
 BFS_radius = R(1);
@@ -55,7 +59,7 @@ options = optimset('TolFun', 1e-10, 'TolX', 1e-10, ...
     'MaxIter', 1000, 'Display', 'none');
 
 % set coefficients for optimization
-coeffs_start = rand(1,5);
+coeffs_start = rand(1,6);
 
 % set norm radius via surface coordinates
 norm_radius = ceil( ...
@@ -70,7 +74,7 @@ norm_radius = ceil( ...
         coeffs_start, options);
 
 % Get extremal angle
-extremal_angle1 = 0.5 * atan(coeffs_optim(5) / coeffs_optim(3));
+extremal_angle1 = 0.5 * atan(coeffs_optim(6) / coeffs_optim(4));
 extremal_angle2 = wrapToPi(extremal_angle1 + pi/2);
 
 % Get radii at extremal angles
@@ -109,12 +113,12 @@ function [loss] = Zernike_fit_loss(c, SURFACE, norm_radius)
 
     % calc Zernike
     z = z + ...
-        c(0) + ...                 % offset
-        c(1) * (2*r.*sin(th)) + ... % ytilt
-        c(2) * (2*r.*cos(th)) + ... % xtilt
-        c(3) * sqrt(6) * (r.^2.*sin(2*th)) + ... % asti obl
-        c(4) * sqrt(3) * (2*r.^2-1) + ... % defocus
-        c(5) * sqrt(6) * (r.^2.*cos(2*th)); % asti vert
+        c(1) + ...                 % offset
+        c(2) * (2*r.*sin(th)) + ... % ytilt
+        c(3) * (2*r.*cos(th)) + ... % xtilt
+        c(4) * sqrt(6) * (r.^2.*sin(2*th)) + ... % asti obl
+        c(5) * sqrt(3) * (2*r.^2-1) + ... % defocus
+        c(6) * sqrt(6) * (r.^2.*cos(2*th)); % asti vert
 
     % calculate deviation of fitted z to input z
     loss = immse( z, SURFACE(:,3) );
