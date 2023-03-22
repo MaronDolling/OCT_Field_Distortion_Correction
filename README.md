@@ -1,2 +1,2 @@
-# OCT_Field_Distortion_Correction
-OCT field distortion correction
+# OCT_Distortion_Correction
+Code for Publication of OCT Fan Distortion Correction
