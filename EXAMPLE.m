@@ -41,3 +41,8 @@ options = optimset('Display', 'iter', 'TolFun',...
 %% Using the phantom surface as an example
 SURFACE = Surface_Detection_Phantom(phantom_img, spacing);
 SURFACE_corrected = Apply_Coefficients_To_Surface(SURFACE, coefficients);
+
+%% Raise BFS and astigmatism
+[BFS_radius, R_steep, A_steep, R_flat, A_flat, ~] = ...
+    Surface_Curvature_Assessment(SURFACE_corrected);
+
