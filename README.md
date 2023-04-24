@@ -21,20 +21,20 @@ If you do not have access to these, you might be able to adjut the algorithm and
 
 ## Scripts
 
-### EXAMPLE.m
+#### EXAMPLE.m
 This script makes a full walkthrough through the calibration and coefficient application process. All necessary steps are shown here.
 The software prerequisites that you are able to have your OCT data in a Z x X x Y - shaped MATLAB array. In the code, dummy data is inserted. WITHOUT SUBSITUTING THE DUMMY DATA, THE CODE WILL NOT WORK PROPERLY. OCT manufacturers like Thorlabs include MATLAB software that can export .oct-files to MATLAB arrays.
 
-### Calculate_Calibration.m
+#### Calculate_Calibration.m
 Use this script to calculate the calibration. It returns a set of coefficients as a MATLAB struct, that has a notation accoding to the paper and can be applied using Apply_Coefficients_Surface.m.
 
-### Apply_Coefficients_Surface.m
+#### Apply_Coefficients_Surface.m
 This is used to actually apply calibration coefficients onto surface data. It is also required to calculate the calibrtion.
 Please make sure to only give extracted surface data complying with the scripts conventions (see MATLAB code documentation).
 
-### Surface_Detection_Phantom.m
+#### Surface_Detection_Phantom.m
 The surface detection is called within Calculate_Calibration.m. It may happen that your phantom or OCT setup delivers images that don't work well with this surface detection algorithm. In this case, you might have to adjust it.
 
-### ellipsoid_fit.m
+#### ellipsoid_fit.m
 Fast sphere fit algorithm. Source: Yury Petrov - https://de.mathworks.com/matlabcentral/fileexchange/24693-ellipsoid-fit.
 
