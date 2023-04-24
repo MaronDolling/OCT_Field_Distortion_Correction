@@ -45,6 +45,8 @@ function [coefficients, fval, exitflag, output] = Calculate_Calibration( ...
 % January 2023
 %------------------------- START MAIN -------------------------------------
 
+n = length(phantom_img);
+
 %% Initialize start values for field correction coefficients
 % Note: coefficients will later be saved in a struct with notation in
 % paper-correspondence
@@ -61,7 +63,11 @@ coefficients_initial = [
 
 
 %% Prepare OCT data
-phantom_img_surface = Surface_Detection_Phantom(phantom_img, spacing);
+phantom_img_surface = cell(1,n);
+for i = 1:n
+    phantom_img_surface{i} = Surface_Detection_Phantom(phantom_img{i}, ...
+        spacing);
+end
 
 
 %% Start optimization process
@@ -89,65 +95,71 @@ end
 
 
 %% Loss function for Optimization prcedure
-function loss = loss_function(phantom_surface, phantom_radius, ...
+function loss = loss_function(phantom_surfaces, phantom_radius, ...
         coefficients, n_circle_steps, circle_width)
     % Calculates the mean deviation of radii at certain angles around the
     % phantom from the expected.
     
-    % Apply the coefficients to correct surface
-    phantom_surface_corrected = Apply_Coefficients_To_Surface( ...
-            phantom_surface, coefficients);
+    n = length(phantom_surfaces);
     
-    x = phantom_surface_corrected(:,1);
-    y = phantom_surface_corrected(:,2);
-    z = phantom_surface_corrected(:,3);
+    radii = nan(n, n_circle_steps);
 
-    % Remove any nan-values from data
-    ii = and(and(~isnan(x), ~isnan(y)), ~isnan(z));
-    x = x(ii);
-    y = y(ii);
-    z = z(ii);
-
-    % Find BFS and center the phantom in x-y-plane
-    [center, ~] = ellipsoid_fit([x,y,z], 'xyz');
-    x = x - center(1); 
-    y = y - center(2); 
-    z = z - center(3);
-    
-    % Get all the angles the circle is fittet at
-    angles = linspace(-pi/2, pi/2 , n_circle_steps);
-    % add small random, so angles are not the same in every iteration
-    angles = angles + (rand * pi / n_circle_steps);
-    % Handle angles that exceed the limit
-    angles(angles > pi/2) = angles(angles > pi/2) - pi;
-    angles = sort(angles);
-    
-    % Calculate the radius for every angle
-    radii = nan(1, n_circle_steps);
-    for i = 1:n_circle_steps
-    
-        % Calculate the two points l1, l2 that define the line that
-        % encapsules all points with a distance smaller than "width"
-        l1 = repmat([cos(angles(i)), sin(angles(i)), 0], length(x), 1);
-        l2 = -l1;
-        distances = point_to_line_distance([x,y,zeros(length(x),1)], l1, l2);
+    for j = 1:n
+        % Apply the coefficients to correct surface
+        phantom_surface_corrected = Apply_Coefficients_To_Surface( ...
+                phantom_surfaces{j}, coefficients);
         
-        % Get indices of points within cirlce widt
-        ii = find(distances < circle_width / 2);
+        x = phantom_surface_corrected(:,1);
+        y = phantom_surface_corrected(:,2);
+        z = phantom_surface_corrected(:,3);
     
-        % Skip sphere fit for very sparse surfaces
-        if length(ii) < 4
-            continue
-        end
+        % Remove any nan-values from data
+        ii = and(and(~isnan(x), ~isnan(y)), ~isnan(z));
+        x = x(ii);
+        y = y(ii);
+        z = z(ii);
+    
+        % Find BFS and center the phantom in x-y-plane
+        [center, ~] = ellipsoid_fit([x,y,z], 'xyz');
+        x = x - center(1); 
+        y = y - center(2); 
+        z = z - center(3);
         
-        % Calculate radius of circle at angle 
-        [~, r] = ellipsoid_fit([x(ii), y(ii), z(ii)], 'xyz');
-        radii(i) = r(1);
+        % Get all the angles the circle is fittet at
+        angles = linspace(-pi/2, pi/2 , n_circle_steps);
+        % add small random, so angles are not the same in every iteration
+        angles = angles + (rand * pi / n_circle_steps);
+        % Handle angles that exceed the limit
+        angles(angles > pi/2) = angles(angles > pi/2) - pi;
+        angles = sort(angles);
+        
+        % Calculate the radius for every angle
+        for i = 1:n_circle_steps
+        
+            % Calculate the two points l1, l2 that define the line that
+            % encapsules all points with a distance smaller than "width"
+            l1 = repmat([cos(angles(i)), sin(angles(i)), 0], length(x), 1);
+            l2 = -l1;
+            distances = point_to_line_distance([x,y,zeros(length(x),1)], l1, l2);
+            
+            % Get indices of points within cirlce widt
+            ii = find(distances < circle_width / 2);
+        
+            % Skip sphere fit for very sparse surfaces
+            if length(ii) < 4
+                continue
+            end
+            
+            % Calculate radius of circle at angle 
+            [~, r] = ellipsoid_fit([x(ii), y(ii), z(ii)], 'xyz');
+            radii(j,i) = r(1);
 
-    end
+        end % for semicircles
+
+    end % for surfaces
 
     % Calculate loss as mean deviation of radii form expected
-    loss = mean(abs(radii-phantom_radius));
+    loss = mean(abs(radii-phantom_radius), 'all');
 
 end
 
