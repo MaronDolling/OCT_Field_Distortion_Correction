@@ -51,14 +51,14 @@ n = length(phantom_img);
 % Note: coefficients will later be saved in a struct with notation in
 % paper-correspondence
 coefficients_initial = [
-    0,1,0;      % Quadratic in x direction
-    0,1,0;      % Quadratic in y direction
-    1,0,0;      % z-dependent scaling of x- and y-direction
-    0,0,0;      % |
-    0,0,0;      % |
-    0,0,0;      % | => Zernike surface distortion approximation
-    0,0,0;      % |
-    0,0,0;      % |
+    0,1,0,0,...      % in x direction
+    0,1,0,0,...      % in y direction
+    1,0,0,  ...      % z-dependent scaling of x- and y-direction
+    0,0,0,  ...      % |
+    0,0,0,  ...      % |
+    0,0,0,  ...      % | => Zernike surface distortion approximation
+    0,0,0,  ...      % |
+    0,0,0,  ...      % |
     ];
 
 
@@ -77,16 +77,16 @@ end
 
 
 %% Make coefficients a struct with corresponding notation
-c.q10 = optim_out(1,1); c.q11 = optim_out(1,2); c.q12 = optim_out(1,3); 
-c.q20 = optim_out(2,1); c.q21 = optim_out(2,2); c.q22 = optim_out(2,3);
+c.q10 = optim_out(1); c.q11 = optim_out(2); c.q12 = optim_out(3); c.q13 = optim_out(4); 
+c.q20 = optim_out(5); c.q21 = optim_out(6); c.q22 = optim_out(7); c.q23 = optim_out(8);
 
-c.s01 = optim_out(3,1); c.s02 = optim_out(3,2); c.s03 = optim_out(3,3);
+c.s01 = optim_out(9); c.s02 = optim_out(10); c.s03 = optim_out(11);
 
-c.c0 = optim_out(4,1); c.c1 = optim_out(4,2); c.c2 = optim_out(4,3);
-c.c3 = optim_out(5,1); c.c4 = optim_out(5,2); c.c5 = optim_out(5,3);
-c.c6 = optim_out(6,1); c.c7 = optim_out(6,2); c.c8 = optim_out(6,3);
-c.c9 = optim_out(7,1); c.c10 = optim_out(7,2); c.c11 = optim_out(7,3);
-c.c12 = optim_out(8,1); c.c13 = optim_out(8,2); c.c14 = optim_out(8,3);
+c.c0 = optim_out(12); c.c1 = optim_out(13); c.c2 = optim_out(14);
+c.c3 = optim_out(15); c.c4 = optim_out(16); c.c5 = optim_out(17);
+c.c6 = optim_out(18); c.c7 = optim_out(19); c.c8 = optim_out(20);
+c.c9 = optim_out(21); c.c10 = optim_out(22); c.c11 = optim_out(23);
+c.c12 = optim_out(24); c.c13 = optim_out(25); c.c14 = optim_out(26);
 
 coefficients = c;
 

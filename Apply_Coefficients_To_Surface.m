@@ -42,16 +42,17 @@ if ~isa(c, "struct")
         c_in = c;
         clear c;
         
-        c.q10 = c_in(1,1); c.q11 = c_in(1,2); c.q12 = c_in(1,3); 
-        c.q20 = c_in(2,1); c.q21 = c_in(2,2); c.q22 = c_in(2,3);
-
-        c.s01 = c_in(3,1); c.s02 = c_in(3,2); c.s03 = c_in(3,3);
+        c.q10 = c_in(1); c.q11 = c_in(2); c.q12 = c_in(3); c.q13 = c_in(4); 
+        c.q20 = c_in(5); c.q21 = c_in(6); c.q22 = c_in(7); c.q23 = c_in(8);
         
-        c.c0 = c_in(4,1); c.c1 = c_in(4,2); c.c2 = c_in(4,3);
-        c.c3 = c_in(5,1); c.c4 = c_in(5,2); c.c5 = c_in(5,3);
-        c.c6 = c_in(6,1); c.c7 = c_in(6,2); c.c8 = c_in(6,3);
-        c.c9 = c_in(7,1); c.c10 = c_in(7,2); c.c11 = c_in(7,3);
-        c.c12 = c_in(8,1); c.c13 = c_in(8,2); c.c14 = c_in(8,3);
+        c.s01 = c_in(9); c.s02 = c_in(10); c.s03 = c_in(11);
+        
+        c.c0 = c_in(12); c.c1 = c_in(13); c.c2 = c_in(14);
+        c.c3 = c_in(15); c.c4 = c_in(16); c.c5 = c_in(17);
+        c.c6 = c_in(18); c.c7 = c_in(19); c.c8 = c_in(20);
+        c.c9 = c_in(21); c.c10 = c_in(22); c.c11 = c_in(23);
+        c.c12 = c_in(24); c.c13 = c_in(25); c.c14 = c_in(26);
+
     catch
         error(['The coefficients could not be applied onto the input ' ...
             'surface. Please check if given coefficients are provided' ...
@@ -66,16 +67,13 @@ x = X(:,1);
 y = X(:,2);
 z = X(:,3);
 
-x = (c.q10 + c.q11*x + c.q12*x.^2); % eq. (1)
-y = (c.q20 + c.q21*y + c.q22*y.^2);
+x = (c.q10 + c.q11*x + c.q12*x.^2) .* (c.s01 + c.s02*z + c.s03*z.^2 + y * c.y1); % x'(x)
+y = (c.q20 + c.q21*y + c.q22*y.^2).* (c.s01 + c.s02*z + c.s03*z.^2 + x * c.x1); % y'(x)
 
-x = x .* (c.s01 + c.s02*z + c.s03*z.^2); % eq. (2)
-y = y .* (c.s01 + c.s02*z + c.s03*z.^2); 
-
-[th, r] = cart2pol(x,y); % eqs. (4), (5)
+[th, r] = cart2pol(x,y);
 r = r ./ sqrt(32);
 
-z = z + ...     % eq. (3)
+z = z + ...
         c.c0 + ...                 % offset
         c.c1 * (2*r.*sin(th)) + ... % ytilt
         c.c2 * (2*r.*cos(th)) + ... % xtilt
