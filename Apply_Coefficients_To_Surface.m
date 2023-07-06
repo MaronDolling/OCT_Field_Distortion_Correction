@@ -71,7 +71,6 @@ x = (c.q10 + c.q11*x + c.q12*x.^2) .* (c.s01 + c.s02*z + c.s03*z.^2 + y * c.y1);
 y = (c.q20 + c.q21*y + c.q22*y.^2).* (c.s01 + c.s02*z + c.s03*z.^2 + x * c.x1); % y'(x)
 
 [th, r] = cart2pol(x,y);
-r = r ./ sqrt(32);
 
 z = z + ...
         c.c0 + ...                 % offset
