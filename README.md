@@ -1,7 +1,7 @@
 # OCT_Distortion_Correction
 Code for Publication of OCT Fan Distortion Correction
 
-## Author
+## Author & Contact
 For questions, suggestions, etc. please don't hesitate to contact
 
 Maron Dolling
