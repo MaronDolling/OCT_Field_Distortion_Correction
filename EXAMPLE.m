@@ -14,7 +14,7 @@
 %--------------------------------------------------------------------------
 
 %% Input data
-phantom_imgs = {ones([512,512,512]), ones([512,512,512])}; % this is your spherical phantom
+phantom_imgs = {ones([512,512,512]), ones([512,512,512])}; % this is your sphere
 
 sample_img = ones([512,512,512]); % this is the sample you want to invstigate
 spacing = [0.00615, 0.01563, 0.01563]; % voxel spacing of OCT (z * x * y)
