@@ -60,10 +60,7 @@ coefficients_initial = [
     0,0,0,  ...      % |
     0,0,0,  ...      % |
     ];
-
-% Add small random value
-coefficients_initial = coefficients_initial + ...
-    (rand(1, numel(coefficients_initial))-0.5) .* 1e-3;
+coefficients_initial 
 
 
 %% Prepare OCT data

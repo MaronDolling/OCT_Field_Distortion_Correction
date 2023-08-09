@@ -31,7 +31,7 @@ if size(X,2) ~= 3
 end
 
 if ~isa(c, "struct")
-    if size(c,1) ~= 8 || size(c,2) ~= 3
+    if size(c,1) ~= 1 || size(c,2) ~= 26
         error(['Invalid coefficients. Please check if given coefficients are provided' ...
             'by ''Calculate_Calibration'', or have correct notation. ' ...
             'If error occurs during execution of ''Calculate_Calibration'',' ...
@@ -67,27 +67,27 @@ x = X(:,1);
 y = X(:,2);
 z = X(:,3);
 
-x = (c.q10 + c.q11*x + c.q12*x.^2) .* (c.s01 + c.s02*z + c.s03*z.^2 + y * c.y1); % x'(x)
-y = (c.q20 + c.q21*y + c.q22*y.^2).* (c.s01 + c.s02*z + c.s03*z.^2 + x * c.x1); % y'(x)
+x = (c.q10 + c.q11*x + c.q12*x.^2) .* (c.s01 + c.s02*z + c.s03*z.^2 + y * c.q13); % x'(x)
+y = (c.q20 + c.q21*y + c.q22*y.^2) .* (c.s01 + c.s02*z + c.s03*z.^2 + x * c.q23); % y'(x)
 
 [th, r] = cart2pol(x,y);
 
 z = z + ...
-        c.c0 + ...                 % offset
-        c.c1 * (2*r.*sin(th)) + ... % ytilt
-        c.c2 * (2*r.*cos(th)) + ... % xtilt
-        c.c3 * sqrt(6) * (r.^2.*sin(2*th)) + ... % asti obl
-        c.c4 * sqrt(3) * (2*r.^2-1) + ... % defocus
-        c.c5 * sqrt(6) * (r.^2.*cos(2*th)) + ... % asti vert
-        c.c6 * sqrt(8) * (r.^3.*sin(3*th)) + ... % trefoil vert
-        c.c7 * sqrt(8) * (3*r.^3-2*r).*sin(th) + ... % vertical coma
-        c.c8 * sqrt(8) * (3*r.^3-2*r).*sin(th) + ... % horizontal coma
-        c.c9 * sqrt(8) * (r.^3.*cos(3*th)) + ... % trefoil obl
-        c.c10 * sqrt(10) * (r.^4.*sin(4*th)) + ... % quadrafoil obl
-        c.c11 * sqrt(10) * (4*r.^4 - 3*r.^2) .* sin(2*th) + ... % obl sec asti
-        c.c12 * sqrt(5) * (6*r.^4 - 6*r.^2 + 1) + ... % primary spherical
-        c.c13 * sqrt(10) * (4*r.^4 - 3*r.^2) .* cos(2*th) + ... % vert sec asti
-        c.c14 * sqrt(10) * (r.^4.*cos(4*th)); % quadrafoil vert
+    c.c0 + ...                 % offset
+    c.c1 * (2*r.*sin(th)) + ... % ytilt
+    c.c2 * (2*r.*cos(th)) + ... % xtilt
+    c.c3 * (r.^2.*sin(2*th)) + ... % asti obl
+    c.c4 * (2*r.^2-1) + ... % defocus
+    c.c5 * (r.^2.*cos(2*th)) + ... % asti vert
+    c.c6 * (r.^3.*sin(3*th)) + ... % trefoil vert
+    c.c7 * (3*r.^3-2*r).*sin(th) + ... % vertical coma
+    c.c8 * (3*r.^3-2*r).*sin(th) + ... % horizontal coma
+    c.c9 * (r.^3.*cos(3*th)) + ... % trefoil obl
+    c.c10 * (r.^4.*sin(4*th)) + ... % quadrafoil obl
+    c.c11 * (4*r.^4 - 3*r.^2) .* sin(2*th) + ... % obl sec asti
+    c.c12 * (6*r.^4 - 6*r.^2 + 1) + ... % primary spherical
+    c.c13 * (4*r.^4 - 3*r.^2) .* cos(2*th) + ... % vert sec asti
+    c.c14 * (r.^4.*cos(4*th)); % quadrafoil vert
 
 Y = [x(:), y(:), z(:)];
 
