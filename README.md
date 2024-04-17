@@ -8,7 +8,7 @@ Maron Dolling
 Institute for Biomedical Optics - Universitaet zu Luebeck
 and
 Medical Laser Center Luebeck
-Email: m.dolling@uni-luebeck.de
+Email: maron.dolling@student.uni-luebeck.de
 
 
 ## Setup
